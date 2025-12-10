@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "tests/**"
       - "github/workflows/**"
+      - ".pre-commit-config.yaml"
       - "pyproject.toml"
       - "uv.lock"
   workflow_dispatch:
@@ -39,8 +40,15 @@ jobs:
       - name: Static typing check
         run: uvx basedpyright
 
+  prek:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: j178/prek-action@v1
+
   test:
     name: Coverage
+    needs: [typos, basedpyright, prek]
     # runs-on: ${{ matrix.os }}
     runs-on: ubuntu-latest
     permissions:
@@ -56,7 +64,6 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         # os: [ubuntu-latest, windows-latest, macos-latest]
-        # pydantic-version: ["v1", "v2"]
 
     env:
       # OS: ${{ matrix.os }}
